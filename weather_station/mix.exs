@@ -47,7 +47,8 @@ defmodule WeatherStation.MixProject do
 
   defp deps(target) do
     [
-      {:nerves_runtime, "~> 0.6"}
+      {:nerves_runtime, "~> 0.6"},
+      {:nerves_network, "~> 0.3"}
     ] ++ system(target)
   end
 
