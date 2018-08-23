@@ -5,11 +5,16 @@ defmodule WeatherStation.Application do
 
   @target Mix.Project.config()[:target]
 
+  @sensor_base_dir "/sys/bus/w1/devices/"
+  @sensor_id "NEEDED"
+  @sensor_path "#{@sensor_base_dir}#{@sensor_id}/w1_slave"
+
   use Application
 
   def start(_type, _args) do
 
-    read_temp()
+    #read_temp()
+    get_sensors()
 
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -47,5 +52,17 @@ defmodule WeatherStation.Application do
     Logger.debug "#{fahrenheit} *F"
     :timer.sleep(1000)
     read_temp
+  end
+
+  def get_sensors do
+    Logger.debug("Listing sensors:")
+    {:ok, ls} = File.ls(@sensor_base_dir)
+    sensors = Enum.filter(ls, fn x -> 
+      File.dir?(x)
+    end)
+    Enum.each(sensors, fn(sensor) -> 
+      Logger.debug("#sensor")
+    end)
+    Logger.debug("finished")
   end
 end
