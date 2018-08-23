@@ -29,3 +29,18 @@ To start your Nerves app:
   * Official website: http://www.nerves-project.org/
   * Discussion Slack elixir-lang #nerves ([Invite](https://elixir-slackin.herokuapp.com/))
   * Source: https://github.com/nerves-project/nerves
+
+## Info about rpi3 (which is what I'm using) + DS18B20 one-wire temp sensor
+
+  * w1 directory: `/sys/bus/w1/devices`
+  * This will contain directorsy for each connected snsor ex: `28-xxxxxxxxxxxx`
+  * the file we need to read is `28-xxxxxxxxxxxx/w1_slave`
+
+Format for file:
+```
+af 01 4b 46 7f ff 01 10 bc : crc=bc YES  
+af 01 4b 46 7f ff 01 10 bc t=26937
+```
+The tempature is `t=*****`
+
+
