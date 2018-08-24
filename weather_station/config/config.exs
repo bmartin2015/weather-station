@@ -24,6 +24,7 @@ config :nerves_network, :default,
     ipv4_address_method: :dhcp
   ]
 
+config :weather_station, file_reader: File
 
 # Customize non-Elixir parts of the firmware. See
 # https://hexdocs.pm/nerves/advanced-configuration.html for details.
@@ -40,4 +41,4 @@ config :shoehorn,
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations
 
-# import_config "#{Mix.Project.config[:target]}.exs"
+import_config "#{Mix.Project.config[:target]}.exs"

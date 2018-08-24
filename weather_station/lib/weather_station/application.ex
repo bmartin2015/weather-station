@@ -2,11 +2,18 @@ defmodule WeatherStation.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
+  require Logger
 
   @target Mix.Project.config()[:target]
 
-  @sensor_base_dir "/sys/bus/w1/devices/"
-  @sensor_id "NEEDED"
+  #@sensor_base_dir "/sys/bus/w1/devices/"
+  #@sensor_id "NEEDED"
+  #@sensor_path "#{@sensor_base_dir}#{@sensor_id}/w1_slave"
+
+  @file_reader Application.get_env(:weather_station, :file_reader, File)
+
+  @sensor_base_dir "priv/"
+  @sensor_id "28-123456adfe"
   @sensor_path "#{@sensor_base_dir}#{@sensor_id}/w1_slave"
 
   use Application
@@ -15,6 +22,8 @@ defmodule WeatherStation.Application do
 
     #read_temp()
     get_sensors()
+
+    Logger.debug "#{@file_reader}"
 
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -42,7 +51,7 @@ defmodule WeatherStation.Application do
     Logger.debug("Reading sensor: #{@sensor_path}")
     sensor_data =
       @sensor_path
-      |> File.read!
+      |> @file_reader.read!
     {temp, _} = Regex.run(~r/t=(\d+)/, sensor_data)
     |> List.last
     |> Float.parse
@@ -56,12 +65,12 @@ defmodule WeatherStation.Application do
 
   def get_sensors do
     Logger.debug("Listing sensors:")
-    {:ok, ls} = File.ls(@sensor_base_dir)
+    {:ok, ls} = @file_reader.ls(@sensor_base_dir)
     sensors = Enum.filter(ls, fn x -> 
-      File.dir?(x)
+      @file_reader.dir?("#{@sensor_base_dir}#{x}")
     end)
     Enum.each(sensors, fn(sensor) -> 
-      Logger.debug("#sensor")
+      Logger.debug("Sensor ID: #{sensor}")
     end)
     Logger.debug("finished")
   end
